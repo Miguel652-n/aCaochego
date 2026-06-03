@@ -144,7 +144,7 @@ main {
 .banner {
     position: relative;
     height: 540px;
-    background: url("/Assets/imgfundoT1.png") center/cover no-repeat;
+    background: url("Assets/imgfundoT1.png") center/cover no-repeat;
     display: flex;
     align-items: center;
     object-fit: cover;
