@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barrio&family=Chewy&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" href="Assets/favicon2.png" type="image/x-icon">
+  <title>aCãochego</title>
+  <link rel="stylesheet" href="formulario.css" />
+</head>
+
+<body>
+  <!-- header -->
+  <header>
+
+    <div class="header-container">
+
+      <nav class="menu">
+
+        <a href="index.html">Inicio</a>
+        <a href="index.html#adocao">Adotar</a>
+        <a href="ONGs.html">Como ajudar</a>
+        <a href="ONGs.html#ongs">ONGs</a>
+
+      </nav>
+
+      <div>
+        <img src="/Assets/teste1.png" alt="" class="logoimg" />
+      </div>
+
+      <div class="btn-abrir-menu" id="btn-menu">
+        <i class="bi bi-list"></i>
+      </div>
+
+      <div class="menu-mobile" id="menu-mobile">
+        <button class="menu-btn" onclick="toggleMenu()"></button>
+        <div class="btn-fechar">
+          <i class="bi bi-x-lg"></i>
+        </div>
+
+        <nav>
+          <a href="#btn-menu">Inicio</a>
+          <a href="#adocao">Adotar</a>
+          <a href="ONGs.html">Como ajudar</a>
+          <a href="ONGs.html">ONGs</a>
+        </nav>
+      </div>
+      <div class="overlay-menu" id="overlay-menu"></div>
+    </div>
+
+  </header>
+  <div class="linha"></div>
+
+  <main>
+
+    <form id="form">
+      <div class="form-adocao">
+      <h1 class="titulo">Ficha de Adoção</h1>
+
+      <section class="nome">
+
+        <label for="name"></label>Nome Completo*</label>
+        <section class="sect-nome">
+          <input type="text" name="name1" id="name" required>
+        </section>
+
+      </section>
+
+     <section class="info-p">
+
+        <section class="email">
+          <label for="email">Email*</label>
+          <input type="text" name="Email" id="email" required>
+        </section>
+
+        <section class="number">
+          <label for="number">Número de contato*</label>
+          <input type="tel" name="number" placeholder="(34)99999-9999" maxlength="14" id="number">
+        </section>
+
+</section>
+
+      <section class="address">
+
+        <label for="address">Endereço*</label>
+        <input type="text" name="rua" placeholder="Endereço da rua" id="endereco">
+
+        <section class="sect-adress">
+
+          <input type="text" name="cidade" placeholder="Cidade " id="cidade">
+          <input type="text" name="CEP" placeholder="CEP" maxlength="8" id="cep">
+          <select name="Estado" id="estado">
+            <option value="select">Selecione um Estado</option>
+            <option value="GO">Goiás</option>
+            <option value="MG">Minas Gerais</option>
+            <option value="RJ">Rio de Janeiro</option>
+            <option value="SP">São Paulo</option>
+          </select>
+          
+        </section>
+        
+      </section>
+
+    <section>
+
+      <section class="texto">
+
+        <label>Conte-nos um pouco sobre você, sua casa e a rotina de sua família</label>
+        <textarea id="descricao"></textarea>
+
+      </section>
+
+    <section class="inf-imp">
+
+      <div class="text-expl">
+
+        <h3>
+          Para garantir o bem-estar dos cães e gatos adotados, temos algumas
+          preocupações e premissas que norteiam a entrevista e o acompanhamento da adaptação do bichinho:
+        </h3>
+
+        <p class="ponto-frente">
+          Permitimos a adoção se sentimos que a família responsável está apta emocionalmente a ter um cão em sua casa. Se terá tempo, paciência e dedicação. Cães são como crianças: precisam de atenção.
+        </p>
+
+        <p class="ponto-frente">
+          O cão precisa ter espaço físico, segurança, comida, água e dedicação. Caso seja um quintal aberto, é necessário garantir um espaço coberto e fechado para proteção contra chuva e sol.
+        </p>
+
+        <p class="ponto-frente">
+          O tutor deve garantir assistência veterinária e manter as vacinações em dia. Valorizamos lares com espaço como sítios ou chácaras, mas desencorajamos locais sem delimitação segura.
+        </p>
+
+        <p class="ponto-frente">
+          Em caso de dificuldades na adaptação, orientamos as melhores medidas. Se houver impossibilidade de manter a adoção, o animal será resgatado e retornará ao abrigo.
+        </p>
+
+        <div class="taxa">
+          <h4>Taxa de adoção: R$ 95,00</h4>
+            <p>
+              O valor é destinado à implantação de um chip de identificação antiabandono, permitindo rastrear e vincular o animal ao tutor, prevenindo abandono e facilitando a localização em caso de perda. Mais do que uma cobrança, essa medida representa um compromisso com o bem-estar dos animais e com a construção de uma cultura de adoção consciente, assegurando que cada pet encontre um lar verdadeiramente responsável e definitivo.
+            </p>
+        </div>
+
+      </div>
+
+    <!-- </section>
+
+      <section class="profissao">
+        <label for="radio-opc">
+          <input type="radio" name="status" id="sim">Estou de acordo e desejo prosseguir
+        </label>
+
+        <label for="radio-opc">
+          <input type="radio" name="status" id="nao">Não estou de acordo e não desejo prosseguir
+        </label>
+
+      </section> -->
+
+     </div>
+
+      <div class="contato">
+        <h4 class="title-cont">Contato</h4>
+
+        <p class="text1-cont"> Entre em contato conosco por esse número:</p>
+        <p class="text2-cont">(34)99986-9973</p>
+
+      </div>
+
+      <div class="Pag-taxa">
+
+        <h4 class="title-pag">Pagamento taxa de Adoção</h4>
+
+        <p class="pag-p1">Tranferencia do valor da taxa de adoção:</p>
+        <p class="pag-p2">Pix: 165.069.586-18</p>
+        <p class="pag-p3">ou Qr code</p>
+
+         <div>
+          <img src="Assets/Qr_taxa.png" class="imgQR">
+        </div>
+
+        <p>valor a ser pago: R$95,00</p>
+
+      </div>
+
+
+      <button type="submit" class="btn-proximo">Confirmar</button>
+
+    
+
+    </form>
+    
+  </main>
+
+  <footer>
+    <p>&copy; 2023 aCãochego. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="form.js"></script>
+  <script src="sandwich.js"></script>
+</body>
+
+</html>

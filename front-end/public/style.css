@@ -1,0 +1,594 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+ 
+html, body {
+    overflow-x: hidden;
+}
+ 
+header {
+    padding-left: 40px;
+    padding-right: 40px;
+    background-color: #fde59d;
+}
+ 
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1500px;
+    margin: 0 auto;
+    width: 90%;
+}
+ 
+.menu {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 600px;
+    flex-wrap: wrap;
+    font-size: 30px;
+    gap: 12%;
+}
+ 
+.menu a {
+    text-decoration: none;
+    color: #743018;
+    font-family: "Chewy", system-ui;
+}
+ 
+.menu a:hover {
+    transform: scale(1.1);
+    transition: 0.3s;
+ 
+}
+ 
+.menu-btn {
+    display: none;
+}
+ 
+/*MENU MOBILE*/
+
+.menu-mobile{
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(242, 227, 255);
+    height: 100vh;
+    width: 200px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 99999;
+    width:  0%;
+    overflow: hidden;
+    transition: .5s;
+}
+
+.overlay-menu{
+    background-color: #00000056;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 88888;
+    display: none;
+}
+
+.btn-abrir-menu i {
+    color: #743018;
+    font-size: 50px;
+    display: none;
+}
+
+.menu-mobile.abrir-menu {
+     width: 50%;
+    
+}
+
+.menu-mobile.abrir-menu ~ .overlay-menu{
+    display: block;
+}
+
+.menu-mobile .btn-fechar i{
+    color: #72559f;
+    font-size: 40px;
+    padding: 20px 4%;
+
+}
+
+.menu-mobile nav{
+    display: flex;
+    padding: 20px;
+    flex-direction: column;
+    gap: 35px;
+    text-align: right;
+}
+
+.menu-mobile nav a {
+    color: #743018;
+    font-size: 25px;
+    font-weight: 300; 
+    text-decoration: none;
+
+}
+
+.menu-mobile nav a:hover{
+    transition: ease 0.8s;
+    padding: 15px;
+    background-color: #d4c2ef;
+}
+
+
+.logoimg {
+    width: 300px;
+    padding-left: 5%;
+   
+}
+ 
+.linha {
+    background-color: #efc58f;
+    width: 100%;
+    height: 5px;
+}
+ 
+main {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #743018;
+}
+ 
+/* teste com a IA, esse fico melhor */
+ 
+.banner {
+    position: relative;
+    height: 540px;
+    background: url("/Assets/imgfundoT1.png") center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    object-fit: cover;
+    margin-top: 100px;
+}
+ 
+.logo{
+    padding: 4%;
+    object-fit: contain;
+ 
+}
+ 
+/* overlay roxo */
+.banner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(106, 76, 147, 0.6);
+    /* roxo transparente */
+}
+ 
+/* conteúdo fica acima do overlay */
+.conteudo {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+ 
+/* texto */
+.texto-banner {
+    color: #ffd54f;
+}
+ 
+.texto-banner h1 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 6vh;
+    font-family: "Barrio", system-ui;
+    margin-right: 50px;
+    width: 300px;
+}
+ 
+.intro {
+    display: flex;
+    justify-content: center;
+    padding: 4%;
+}
+ 
+.intro-container {
+    align-items: center;
+    max-width: 900px;
+}
+ 
+.intro h1 {
+    font-size: 46px;
+    text-align: center;
+}
+ 
+.intro p {
+    font-size: 22px;
+    color: #b16634;
+    text-align: center;
+    line-height: 1.4;
+    margin-top: 15px;
+}
+ 
+.linha2 {
+    background-color: #ffeae0;
+    width: 80%;
+    margin-left: 10%;
+    height: 2px;
+}
+ 
+.hero {
+    display: grid;
+    color: black;
+}
+ 
+.title-hero{
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+    font-size: 40px;
+    color: black;
+}
+ 
+.hero-container {
+    margin-left: 8%;
+}
+ 
+.h2-container {
+    font-size: 32px;
+}
+ 
+.regioes {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+}
+ 
+.regioes p{
+    margin-top: 15px;
+    font-size: 20px;
+}
+ 
+.estados {
+    background-color: #fde59d;
+    color: #743018;
+    border-radius: 20px;
+    padding: 5px;
+    margin-bottom: 15px;
+    width: 260px;
+    height: 50px;
+    border-radius: 140px;
+    outline: none;
+    border: none;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+}
+ 
+.grupos{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    font-size: 24px;
+}
+ 
+.grid-2 div{
+    gap: 15px;
+    width: 135px;
+    margin: 5px;
+}
+ 
+#grid-2{
+    gap: 15px;
+    width: 110px;
+    margin: 5px;
+}
+ 
+.grid-3 div{
+    gap: 15px;
+    width: 95px;
+    margin: 5px;
+}
+ 
+.linha3 {
+    background-color: #d4c2ef;
+    width: 20%;
+    margin-left: 40%;
+    height: 3px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+ 
+.title-adocao h2 {
+    margin-top: 60px;
+    margin-left: 8%;
+    font-size: 36px;
+    color: #72559f;
+}
+ 
+.title-adocao p {
+    margin-left: 8%;
+    font-size: 24px;
+}
+ 
+.adotar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    padding: 6%;
+    text-align: center;
+    margin-top: 30px;
+}
+ 
+.adotar-card {
+    margin-bottom: 38px;
+}
+ 
+.img-wrapper img {
+    width: 100%; 
+    object-fit: contain;
+    height: 360px;
+}
+ 
+.adotar-card h3{
+    font-size: 32px;
+}
+
+.adotar-card p {
+    font-size: 24px;
+    margin-top: 6px;
+}
+ 
+button {
+    background-color: #efc58f;
+    border: none;
+    transition: 0.3s;
+    padding: 15px 40px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+button a {
+    text-decoration: none;
+    color: black;
+}
+ 
+#verMais {
+    background-color: #efc58f;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    max-width: 140px;
+    display: flex;
+    justify-self: center;
+}
+
+#verMais:hover {
+    transform: scale(1.05);
+}
+
+.name {
+    margin: 10px 0;
+    font-size: 18px;
+}
+ 
+.linha2 {
+    background-color: #ffeae0;
+    width: 80%;
+    margin-left: 10%;
+    height: 3px;
+    margin-top: 25px;
+}
+ 
+.title-adotrometro {
+    margin-top: 50px;
+    margin-left: 10%;
+}
+ 
+.title-adotrometro {
+    width: 300px;
+    max-width: 100%;
+    height: auto;
+}
+ 
+.img-adotrometro {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+ 
+.img-adotrometro img {
+    max-width: 100%;
+    height: auto;
+}
+ 
+.img-adotrometro-mobile {
+    display: none;
+}
+ 
+footer {
+    background-color: #72559f;
+    color: white;
+    text-align: center;
+    font-size: 20px;
+    padding: 20px;
+    margin-top: 50px;
+}
+ 
+@media(max-width: 1420px){
+    .banner {
+        background:none;
+    }
+   
+    .menu {
+        display: none;
+    }
+ 
+    .btn-sandwich {
+        max-width: 140px;
+    }
+ 
+    .btn-abrir-menu i {
+        display: flex;
+    }
+     .texto-banner h1 {
+        font-size: clamp(32px, 6vw, 40px);
+    }
+ 
+}
+
+@media (max-width: 900px) {
+ 
+    .banner img {
+        width: 380px;
+    }
+ 
+    .conteudo {
+        flex-wrap: nowrap;
+    }
+ 
+    .texto-banner h1 {
+        width: 300px;
+        gap: 8px;
+    }
+ 
+    .adotar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+ 
+}
+ 
+@media (max-width: 768px) {
+   
+    .menu {
+        display: none;
+    }
+ 
+    .conteudo {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        gap: 30px;
+    }
+ 
+    .banner img {
+        width: 300px;
+    }
+ 
+    .texto-banner{
+        display: block;
+        text-align: center;
+    }
+ 
+    .texto-banner h1 {
+        font-size: clamp(20px, 6vw, 28px);
+        align-items: center;
+        margin-right: 0;
+        line-height: 1.2;
+        margin-bottom: 20px;
+    }
+ 
+    .intro h1 {
+        max-width: 500px;
+        justify-self: center;
+        margin-bottom: 32px;
+    }
+ 
+    .img-adotrometro {
+        display: none;
+    }
+ 
+    .img-adotrometro-mobile {
+        display: flex;
+        justify-content: center;
+        height: 1200px;
+    }
+}
+ 
+/* mobile */
+@media (max-width: 440px) {
+ 
+    .menu {
+        display: none;
+    }
+ 
+    .logoimg{
+        width: 240px;
+        padding-left: 0;
+        padding-right: 20%;
+    }
+ 
+    .menu-btn{
+        margin: 0;
+    }
+ 
+    .conteudo {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        gap: 30px;
+    }
+ 
+    .banner img {
+        width: 260px;
+    }
+ 
+    .texto-banner{
+        display: block;
+        text-align: center;
+    }
+ 
+    .texto-banner h1 {
+        align-items: center;
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+ 
+    .intro {
+        padding: 4%;
+    }
+ 
+    .regioes {
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+ 
+    .estados {
+        flex-wrap: wrap;
+    }
+ 
+    .grupos {
+        grid-template-columns: 1fr;
+        justify-content: center;
+    }
+ 
+    .adotar {
+        grid-template-columns: 1fr;
+    }
+ 
+    .title-adotrometro img {
+        width: 220px;
+    }
+ 
+    .img-adotrometro-mobile img {
+        width: 300px;
+        height: 800px;
+    }
+
+    .estados {
+        font-size: 14px;
+    }
+}
