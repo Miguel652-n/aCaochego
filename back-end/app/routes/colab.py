@@ -34,7 +34,38 @@ class ColabUpdate(BaseModel):
 
 
 # =========================
-# ROTA GET
+# ROTA GET - LISTAR COLABS
+# =========================
+
+@router.get("/colabs")
+def listar_colabs():
+
+    db = SessionLocal()
+
+    try:
+        colabs = db.query(ColabModel).all()
+
+        return [
+            {
+                "id": colab.id,
+                "nome": colab.nome,
+                "email": colab.email,
+                "number": colab.number,
+                "endereco": colab.endereco,
+                "cidade": colab.cidade,
+                "cep": colab.cep,
+                "estado": colab.estado,
+                "descricao": colab.descricao
+            }
+            for colab in colabs
+        ]
+
+    finally:
+        db.close()
+
+
+# =========================
+# ROTA POST - CRIAR COLAB
 # =========================
 
 @router.post("/colabs")
@@ -63,35 +94,6 @@ def criar_colab(colab: Colab):
 
     finally:
         db.close()
-
-
-# =========================
-# ROTA POST
-# =========================
-
-@router.post("/colabs")
-def criar_colab(colab: Colab):
-
-    db = SessionLocal()
-
-    novo_colab = ColabModel(
-        nome=colab.nome,
-        email=colab.email,
-        number=colab.number,
-        endereco=colab.endereco,
-        cidade=colab.cidade,
-        cep=colab.cep,
-        estado=colab.estado,
-        descricao=colab.descricao
-    )
-
-    db.add(novo_colab)
-
-    db.commit()
-
-    return {
-        "mensagem": "Colaborador adicionado"
-    }
 
 
 # =========================
