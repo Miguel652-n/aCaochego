@@ -29,3 +29,4 @@ class ColabModel(Base):
     cep = Column(String)
     estado = Column(String)
     descricao = Column(String)
+    animal = Column(String)

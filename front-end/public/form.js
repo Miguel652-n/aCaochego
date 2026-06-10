@@ -1,4 +1,7 @@
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "https://acaochego-production.up.railway.app";
+
+const params = new URLSearchParams(window.location.search);
+const animalNome = params.get("animal") || "";
 
 const form = document.querySelector("form");
 
@@ -14,7 +17,8 @@ form.addEventListener("submit", async (e) => {
         cidade: document.getElementById("cidade").value,
         cep: document.getElementById("cep").value,
         estado: document.getElementById("estado").value,
-        descricao: document.getElementById("descricao").value
+        descricao: document.getElementById("descricao").value,
+        animal: animalNome
     };
 
     try {

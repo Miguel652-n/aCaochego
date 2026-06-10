@@ -20,6 +20,7 @@ class Colab(BaseModel):
     cep: str
     estado: str
     descricao: str
+    animal: Optional[str] = None
 
 
 class ColabUpdate(BaseModel):
@@ -31,7 +32,7 @@ class ColabUpdate(BaseModel):
     cep: Optional[str] = None
     estado: Optional[str] = None
     descricao: Optional[str] = None
-
+    animal: Optional[str] = None
 
 # =========================
 # ROTA GET - LISTAR COLABS
@@ -55,7 +56,8 @@ def listar_colabs():
                 "cidade": colab.cidade,
                 "cep": colab.cep,
                 "estado": colab.estado,
-                "descricao": colab.descricao
+                "descricao": colab.descricao,
+                "animal": colab.animal
             }
             for colab in colabs
         ]
@@ -82,7 +84,8 @@ def criar_colab(colab: Colab):
             cidade=colab.cidade,
             cep=colab.cep,
             estado=colab.estado,
-            descricao=colab.descricao
+            descricao=colab.descricao,
+            animal=colab.animal
         )
 
         db.add(novo_colab)
@@ -135,6 +138,9 @@ def atualizar_colab(id: int, colab: ColabUpdate):
 
     if colab.descricao is not None:
         colab_db.descricao = colab.descricao
+        
+    if colab.animal is not None:
+        colab_db.animal = colab.animal
 
     db.commit()
 

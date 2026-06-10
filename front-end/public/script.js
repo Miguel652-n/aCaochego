@@ -84,7 +84,7 @@ function renderPets() {
 
                 <p>${pet.nome}</p>
 
-                <button><a href="formulario.html">Adotar</a></button>
+                <button><a href="formulario.html?animal=${pet.nome}">Adotar</a></button>
             </article>
         `;
     });
@@ -152,7 +152,7 @@ function renderPets() {
 
                 <p>${pet.nome}</p>
 
-                <button><a href="formulario.html">Adotar</a></button>
+                <button><a href="formulario.html?animal=${pet.nome}">Adotar</a></button>
 
             </article>
 
