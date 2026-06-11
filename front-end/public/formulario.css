@@ -136,7 +136,7 @@ header {
 
 body{
     color: #000000;
-    font-family: Arial, Helvetica, sans-serif;
+
 }
 
 main{
@@ -154,6 +154,7 @@ main{
     background-color: #c5cced;
     border: 2px solid #9fa9d4;
     border-radius: 25px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .titulo{
@@ -161,6 +162,7 @@ main{
     justify-content: center;
     margin-top: 25px;
     font-family: sans-serif;
+    margin-bottom: 15px;
 }
 
 
@@ -197,10 +199,12 @@ textarea{
     height: 100px;
     border-radius: 10px;
     border: 2px solid  #8f98bc;
+    color: rgb(0, 0, 0);
     margin-bottom: 25px;
     resize: vertical;
     margin-top: 10px;
     outline: none;
+
 }
 
 inf-imp {
@@ -278,11 +282,17 @@ inf-imp {
     padding-bottom: 5px;
 }
 
-.imgQR{
+.imgQR {
     width: 250px;
 }
 
-.btn-proximo{
+.comprovante {
+    text-align: center;
+    margin-top: 15px;
+
+}
+
+.btn-proximo {
     display: flex;
     justify-self: center;
     width: 120px;
@@ -293,7 +303,7 @@ inf-imp {
     color: white;
     border-radius: 25px;
     margin-top: 30px;
-    
+
    
 }
 
@@ -304,5 +314,39 @@ footer {
     font-size: 20px;
     padding: 20px;
     margin-top: 50px;
+    font-family: Arial, Helvetica, sans-serif;
 
+}
+
+@media(max-width: 1420px){
+    .menu {
+        display: none;
+    }
+    
+    .btn-abrir-menu i {
+        max-width: 140px;
+        display: block;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .info-p{
+        display: grid;
+        grid-template-columns:  1fr;
+        gap: 10px;
+    }
+
+    footer {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 440px){
+    .logoimg{
+        width: 240px;
+        padding-left: 0;
+        padding-right: 20%;
+    }
 }

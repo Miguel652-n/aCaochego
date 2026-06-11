@@ -222,13 +222,15 @@ select {
     gap: 40px;
     padding: 6%;
     text-align: center;
+  
 }
  
 .img-wrapper img {
     max-width: 300px;
     object-fit: contain;
-    height: 360px; 
-    border-radius: 30px;
+    height: 300px; 
+    border-radius: 20px;
+   
 }
  
 .ONGs-card h3{
@@ -278,6 +280,7 @@ footer {
     text-align: center;
     font-size: 20px;
     padding: 40px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 @media(max-width: 1420px){
@@ -285,12 +288,12 @@ footer {
         display: none;
     }
     
-    select{
-        font-size: 20px;
-    }
-     
     .btn-sandwich {
         max-width: 140px;
+    }
+
+    select{
+        font-size: 20px;
     }
  
     .btn-abrir-menu i {
@@ -300,16 +303,16 @@ footer {
      .texto-banner h1 {
         font-size: clamp(32px, 6vw, 40px);
     }
+    
+    .ONGs {
+        grid-template-columns: repeat(2, 1fr);
+    }
 
 }
 
 @media (max-width: 900px) {
    select{
         font-size: 15px;
-    }
-    
-    .ONGs {
-        grid-template-columns: repeat(2, 1fr);
     }
 
 }
@@ -328,6 +331,11 @@ footer {
     select{
         font-size: 12px;
     }
+
+    footer {
+        font-size: 15px;
+    }
+
 }
 
 @media (max-width: 710px) {
