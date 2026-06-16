@@ -31,6 +31,10 @@ form.addEventListener("submit", async (e) => {
             body: JSON.stringify(dados)
         });
 
+        if (!resposta.ok) {
+            throw new Error(`Erro HTTP: ${resposta.status}`);
+        }
+
         const resultado = await resposta.json();
 
         console.log(resultado);
