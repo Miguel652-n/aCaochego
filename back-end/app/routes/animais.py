@@ -21,6 +21,7 @@ class Animal(BaseModel):
     ong: str
     cidade: str
     imagem: str
+    status: Optional[str] = "disponivel"
 
 
 class AnimalUpdate(BaseModel):
@@ -32,6 +33,7 @@ class AnimalUpdate(BaseModel):
     ong: Optional[str] = None
     cidade: Optional[str] = None
     imagem: Optional[str] = None
+    status: Optional[str] = None
 
 
 # =========================
@@ -40,12 +42,9 @@ class AnimalUpdate(BaseModel):
 
 @router.get("/animais")
 def listar_animais():
-
     db = SessionLocal()
-
     try:
         animais = db.query(AnimaisModel).all()
-
         return [
             {
                 "id": animal.id,
@@ -56,14 +55,13 @@ def listar_animais():
                 "regiao": animal.regiao,
                 "ong": animal.ong,
                 "cidade": animal.cidade,
-                "imagem": animal.imagem
+                "imagem": animal.imagem,
+                "status": animal.status or "disponivel"
             }
             for animal in animais
         ]
-
     finally:
         db.close()
-
 
 
 # =========================
@@ -72,9 +70,7 @@ def listar_animais():
 
 @router.post("/animais")
 def criar_animal(animal: Animal):
-
     db = SessionLocal()
-
     try:
         novo_animal = AnimaisModel(
             nome=animal.nome,
@@ -84,25 +80,16 @@ def criar_animal(animal: Animal):
             idade=animal.idade,
             regiao=animal.regiao,
             cidade=animal.cidade,
-            imagem=animal.imagem
+            imagem=animal.imagem,
+            status=animal.status or "disponivel"
         )
-
         db.add(novo_animal)
         db.commit()
         db.refresh(novo_animal)
-
-        return {
-            "mensagem": "animal criado com sucesso",
-            "animal": {
-                "id": novo_animal.id,
-                "nome": novo_animal.nome
-            }
-        }
-
+        return {"mensagem": "animal criado com sucesso", "animal": {"id": novo_animal.id, "nome": novo_animal.nome}}
     except Exception as e:
         db.rollback()
         raise e
-
     finally:
         db.close()
 
@@ -113,52 +100,19 @@ def criar_animal(animal: Animal):
 
 @router.patch("/animais/{id}")
 def atualizar_animal(id: int, animal: AnimalUpdate):
-
     db = SessionLocal()
-
-    animal_db = db.query(AnimaisModel).filter(
-        AnimaisModel.id == id
-    ).first()
-
+    animal_db = db.query(AnimaisModel).filter(AnimaisModel.id == id).first()
     if not animal_db:
         return {"erro": "animal não encontrado"}
 
-    if animal.nome is not None:
-        animal_db.nome = animal.nome
-
-    if animal.especie is not None:
-        animal_db.especie = animal.especie
-
-    if animal.genero is not None:
-        animal_db.genero = animal.genero
-
-    if animal.idade is not None:
-        animal_db.idade = animal.idade
-
-    if animal.regiao is not None:
-        animal_db.regiao = animal.regiao
-
-    if animal.ong is not None:
-        animal_db.ong = animal.ong
-
-    if animal.cidade is not None:
-        animal_db.cidade = animal.cidade
-
-    if animal.imagem is not None:
-        animal_db.imagem = animal.imagem
+    for campo in ["nome", "especie", "genero", "idade", "regiao", "ong", "cidade", "imagem", "status"]:
+        valor = getattr(animal, campo)
+        if valor is not None:
+            setattr(animal_db, campo, valor)
 
     db.commit()
-
     db.refresh(animal_db)
-
-    return {
-        "mensagem": "animal atualizado com sucesso",
-        "animal": {
-            "id": animal_db.id,
-            "nome": animal_db.nome
-        }
-    }
-    
+    return {"mensagem": "animal atualizado com sucesso"}
 
 
 # =========================
@@ -167,20 +121,10 @@ def atualizar_animal(id: int, animal: AnimalUpdate):
 
 @router.delete("/animais/{id}")
 def deletar_animal(id: int):
-
     db = SessionLocal()
-
-    animal_db = db.query(AnimaisModel).filter(
-        AnimaisModel.id == id
-    ).first()
-
+    animal_db = db.query(AnimaisModel).filter(AnimaisModel.id == id).first()
     if not animal_db:
         return {"erro": "animal não encontrado"}
-
     db.delete(animal_db)
-
     db.commit()
-
-    return {
-        "mensagem": "animal deletado com sucesso"
-    }
+    return {"mensagem": "animal deletado com sucesso"}

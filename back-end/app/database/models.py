@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from database.connection import Base
 
+
 class AnimaisModel(Base):
 
     __tablename__ = "animais"
@@ -14,6 +15,8 @@ class AnimaisModel(Base):
     ong = Column(String)
     cidade = Column(String)
     imagem = Column(String)
+    # disponivel | em_adocao | adotado
+    status = Column(String, default="disponivel")
 
 
 class ColabModel(Base):
@@ -30,3 +33,6 @@ class ColabModel(Base):
     estado = Column(String)
     descricao = Column(String)
     animal = Column(String)
+    # aprovado | reprovado | pendente
+    aprovado = Column(String, default="pendente")
+    analise_ia = Column(String)
