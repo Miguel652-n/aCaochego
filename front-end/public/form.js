@@ -1,4 +1,6 @@
-const API_URL = "https://acaochego-production.up.railway.app";
+const API_URL = window.location.origin && window.location.origin !== "null"
+    ? window.location.origin
+    : "http://127.0.0.1:8000";
 
 const params = new URLSearchParams(window.location.search);
 const animalNome = params.get("animal") || "";

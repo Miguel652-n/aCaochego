@@ -1,4 +1,6 @@
-const API_URL = "https://acaochego-production.up.railway.app";
+const API_URL = window.location.origin && window.location.origin !== "null"
+    ? window.location.origin
+    : "http://127.0.0.1:8000";
 
 // Lista local como fallback caso a API falhe
 const petsDataLocal = [

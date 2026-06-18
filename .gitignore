@@ -2,3 +2,5 @@
 back-end/.venv
 __pycache__/
 database.db
+local.db
+back-end/app/.env

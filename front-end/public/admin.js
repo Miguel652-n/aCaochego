@@ -1,4 +1,6 @@
-const API_URL = "https://acaochego-production.up.railway.app";
+const API_URL = window.location.origin && window.location.origin !== "null"
+    ? window.location.origin
+    : "http://127.0.0.1:8000";
 
   // credenciais simples (altere aqui)
   const USUARIO = "admin";
@@ -116,6 +118,16 @@ const API_URL = "https://acaochego-production.up.railway.app";
     const c = todosColabs.find(x => x.id === id);
     if (!c) return;
 
+    // Badge de status da IA
+    const statusMap = {
+      aprovado: { cor: "#2ecc71", bg: "#eafaf1", texto: "✓ Aprovado" },
+      reprovado: { cor: "#e74c3c", bg: "#fdecea", texto: "✗ Reprovado" },
+      pendente: { cor: "#f39c12", bg: "#fef5e7", texto: "⏳ Pendente" }
+    };
+    const statusIA = c.aprovado || "pendente";
+    const s = statusMap[statusIA];
+    const badgeHTML = `<span style="background:${s.bg};color:${s.cor};border:1.5px solid ${s.cor};border-radius:20px;padding:6px 14px;font-weight:bold;font-size:13px;display:inline-block;">${s.texto}</span>`;
+
     document.getElementById("modal-nome").textContent = c.nome;
     document.getElementById("modal-conteudo").innerHTML = `
       <div class="modal-linha"><span class="modal-label">Email</span><span class="modal-valor">${c.email}</span></div>
@@ -125,6 +137,9 @@ const API_URL = "https://acaochego-production.up.railway.app";
       <div class="modal-linha"><span class="modal-label">CEP</span><span class="modal-valor">${c.cep || "—"}</span></div>
       <div class="modal-linha"><span class="modal-label">Animal desejado</span><span class="modal-valor">${c.animal || "Não informado"}</span></div>
       <div class="modal-linha"><span class="modal-label">Descrição</span><span class="modal-valor">${c.descricao || "—"}</span></div>
+      <hr style="margin:16px 0;border:none;border-top:1px solid #eee;">
+      <div class="modal-linha"><span class="modal-label">Status da IA</span><span class="modal-valor">${badgeHTML}</span></div>
+      <div class="modal-linha"><span class="modal-label">Análise</span><span class="modal-valor">${c.analise_ia || "—"}</span></div>
     `;
 
     document.getElementById("overlay").classList.add("ativo");
