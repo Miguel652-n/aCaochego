@@ -1,17 +1,25 @@
 import os
+from pathlib import Path
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
  
-# Railway injeta a variável DATABASE_URL automaticamente quando você
-# adiciona um banco PostgreSQL ao projeto.
-DATABASE_URL = "postgresql://postgres:BCYODXbIhzkvhHDepTVGuHnyrrtAnLMu@postgres.railway.internal:5432/railway"
+# Carrega variáveis de ambiente do arquivo .env, se existir.
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
-# O Railway às vezes fornece a URL com "postgres://" (formato antigo),
-# mas o SQLAlchemy 2.x exige "postgresql://". A linha abaixo corrige isso.
-if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+# Use DATABASE_URL do ambiente quando disponível.
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+# Para desenvolvimento local, usa um banco SQLite simples.
+if not DATABASE_URL:
+    DATABASE_URL = "sqlite:///./local.db"
+
+# O SQLAlchemy 2.x exige "postgresql://" em vez de "postgres://".
+if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
  
-engine = create_engine(DATABASE_URL)
+connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+engine = create_engine(DATABASE_URL, connect_args=connect_args)
  
 SessionLocal = sessionmaker(
     autocommit=False,
