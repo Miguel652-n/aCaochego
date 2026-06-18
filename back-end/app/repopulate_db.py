@@ -1,22 +1,7 @@
-# uvicorn app.main:app --reload
-
-from pathlib import Path
-
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-
-from routes.colab import router as colab_router
-from routes.animais import router as animais_router
-
-from database.connection import engine, SessionLocal
-from database.models import Base, AnimaisModel
-
-Base.metadata.create_all(bind=engine)
-
-# ========================
-# POPULAR BANCO NA PRIMEIRA EXECUÇÃO
-# ========================
+"""Script para limpar e repopular o banco de dados com animais com imagens"""
+from database.connection import SessionLocal
+from database.models import AnimaisModel
+from sqlalchemy import text
 
 ANIMAIS_PADRAO = [
     {"nome":"Ben","especie":"cachorro","genero":"macho","idade":"Idoso","regiao":"MG","ong":"Amparo pet","cidade":"Uberlândia","imagem":"Assets/Doguinhos/Machos/Ben_I.png"},
@@ -64,33 +49,24 @@ ANIMAIS_PADRAO = [
     {"nome":"Zoe","especie":"gato","genero":"femea","idade":"Adulto","regiao":"GO","ong":"Lar dos animais","cidade":"Goiânia","imagem":"Assets/Miaus/Femeas/Zoe_A.png"},
 ]
 
-def popular_animais_iniciais():
-    """Popula o banco com animais padrão se estiver vazio"""
-    db = SessionLocal()
-    try:
-        if db.query(AnimaisModel).count() == 0:
-            for animal in ANIMAIS_PADRAO:
-                novo = AnimaisModel(**animal, status="disponivel")
-                db.add(novo)
-            db.commit()
-            print("✓ Banco de dados populado com animais padrão")
-    finally:
-        db.close()
-
-popular_animais_iniciais()
-
-app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-app.include_router(colab_router)
-app.include_router(animais_router)
-
-static_dir = Path(__file__).resolve().parents[2] / "front-end" / "public"
-app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
+db = SessionLocal()
+try:
+    # Deletar todos os animais
+    db.execute(text("DELETE FROM animais"))
+    db.commit()
+    print("✓ Tabela de animais limpa")
+    
+    # Inserir novos
+    for animal in ANIMAIS_PADRAO:
+        novo = AnimaisModel(**animal, status="disponivel")
+        db.add(novo)
+    db.commit()
+    print(f"✓ {len(ANIMAIS_PADRAO)} animais adicionados")
+    
+    # Verificar
+    count = db.query(AnimaisModel).count()
+    primeira = db.query(AnimaisModel).first()
+    print(f"\n📊 Total: {count} animais")
+    print(f"🖼️  Primeira imagem: {primeira.imagem}")
+finally:
+    db.close()
