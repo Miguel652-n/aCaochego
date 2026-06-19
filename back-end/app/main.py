@@ -1,6 +1,7 @@
 # uvicorn app.main:app --reload
 
 from pathlib import Path
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -81,9 +82,15 @@ popular_animais_iniciais()
 
 app = FastAPI()
 
+allowed = os.environ.get("ALLOWED_ORIGINS", "*")
+if allowed == "*" or allowed.strip() == "":
+    origins = ["*"]
+else:
+    origins = [o.strip() for o in allowed.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

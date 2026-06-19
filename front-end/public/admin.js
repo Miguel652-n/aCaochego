@@ -1,6 +1,12 @@
-const API_URL = window.location.origin && window.location.origin !== "null"
-    ? window.location.origin
-    : "http://127.0.0.1:8000";
+function getApiUrl() {
+  const meta = document.querySelector('meta[name="api-url"]');
+  if (meta && meta.content && meta.content.trim() !== "") return meta.content.trim();
+  if (window.__API_URL__) return window.__API_URL__;
+  if (window.location.origin && window.location.origin !== "null") return window.location.origin;
+  return "http://127.0.0.1:8000";
+}
+
+const API_URL = getApiUrl();
 
   // credenciais simples (altere aqui)
   const USUARIO = "admin";
