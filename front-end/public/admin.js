@@ -8,36 +8,73 @@ function getApiUrl() {
 
 const API_URL = getApiUrl();
 
-  // credenciais simples (altere aqui)
-  const USUARIO = "admin";
-  const SENHA   = "acaochego2025";
+// Usar credenciais de servidor (chamar endpoint de auth no backend)
+// OU usar sessionStorage com token
+const ADMIN_SESSION_KEY = "admin_session_token";
 
-  let todosColabs = [];
+let todosColabs = [];
 
-  function fazerLogin() {
-    const u = document.getElementById("usuario").value;
-    const s = document.getElementById("senha").value;
-    if (u === USUARIO && s === SENHA) {
-      document.getElementById("tela-login").style.display = "none";
-      document.getElementById("tela-admin").style.display = "block";
-      carregarColabs();
-    } else {
-      document.getElementById("erro-login").style.display = "block";
-    }
+// Verificar se já está autenticado
+function verificarAutenticacao() {
+  const token = sessionStorage.getItem(ADMIN_SESSION_KEY);
+  if (token) {
+    document.getElementById("tela-login").style.display = "none";
+    document.getElementById("tela-admin").style.display = "block";
+    carregarColabs();
+  }
+}
+
+function fazerLogin() {
+  const u = document.getElementById("usuario").value.trim();
+  const s = document.getElementById("senha").value;
+  
+  if (!u || !s) {
+    exibirErro("Preencha usuário e senha");
+    return;
   }
 
-  document.addEventListener("keydown", e => {
-    if (e.key === "Enter" && document.getElementById("tela-login").style.display !== "none") {
-      fazerLogin();
-    }
-  });
+  // Fazer chamada ao backend para validar
+  fetch(`${API_URL}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ usuario: u, senha: s })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Credenciais inválidas");
+    return res.json();
+  })
+  .then(data => {
+    sessionStorage.setItem(ADMIN_SESSION_KEY, data.token);
+    document.getElementById("tela-login").style.display = "none";
+    document.getElementById("tela-admin").style.display = "block";
+    document.getElementById("erro-login").style.display = "none";
+    carregarColabs();
+  })
+  .catch(() => exibirErro("Usuário ou senha inválidos"));
+}
 
-  function sair() {
-    document.getElementById("tela-login").style.display = "flex";
-    document.getElementById("tela-admin").style.display = "none";
-    document.getElementById("usuario").value = "";
-    document.getElementById("senha").value = "";
+function exibirErro(msg) {
+  const erroDiv = document.getElementById("erro-login");
+  if (erroDiv) {
+    erroDiv.textContent = msg;
+    erroDiv.style.display = "block";
   }
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && document.getElementById("tela-login").style.display !== "none") {
+    fazerLogin();
+  }
+});
+
+function sair() {
+  sessionStorage.removeItem(ADMIN_SESSION_KEY);
+  document.getElementById("tela-login").style.display = "flex";
+  document.getElementById("tela-admin").style.display = "none";
+  document.getElementById("usuario").value = "";
+  document.getElementById("senha").value = "";
+  document.getElementById("erro-login").style.display = "none";
+}
 
   async function carregarColabs() {
     const tbody = document.getElementById("tabela-body");
@@ -45,6 +82,8 @@ const API_URL = getApiUrl();
 
     try {
       const res = await fetch(`${API_URL}/api/colabs`);
+      if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
+      
       todosColabs = await res.json();
 
       atualizarResumo();
@@ -55,7 +94,8 @@ const API_URL = getApiUrl();
       document.getElementById("ultimo-update").textContent = `Atualizado às ${agora}`;
 
     } catch (e) {
-      tbody.innerHTML = `<tr><td colspan="7"><div class="estado"><i class="bi bi-wifi-off"></i>Erro ao conectar com a API</div></td></tr>`;
+      console.error("Erro ao carregar colabs:", e);
+      tbody.innerHTML = `<tr><td colspan="7"><div class="estado"><i class="bi bi-exclamation-triangle"></i>Erro ao conectar com a API: ${e.message}</div></td></tr>`;
     }
   }
 
@@ -69,7 +109,8 @@ const API_URL = getApiUrl();
   function atualizarFiltroAnimal() {
     const sel = document.getElementById("filtro-animal");
     const atual = sel.value;
-    const animais = [...new Set(todosColabs.map(c => c.animal).filter(Boolean))].sort();
+    const animais = [...new Set(todosColabs.map(c => c.animal || c.animal_id).filter(Boolean))].sort();
+
     sel.innerHTML = `<option value="">Todos os animais</option>`;
     animais.forEach(a => {
       const op = document.createElement("option");
@@ -162,12 +203,20 @@ const API_URL = getApiUrl();
     if (!confirm("Remover este cadastro?")) return;
 
     try {
-      await fetch(`${API_URL}/api/colabs/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_URL}/api/colabs/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
+      
+      const data = await res.json();
       todosColabs = todosColabs.filter(c => c.id !== id);
       atualizarResumo();
       atualizarFiltroAnimal();
       filtrar();
+      alert("Cadastro removido com sucesso");
     } catch (err) {
-      alert("Erro ao deletar.");
+      console.error("Erro ao deletar:", err);
+      alert(`Erro ao deletar: ${err.message}`);
     }
   }
+
+// Verificar autenticação ao carregar página
+document.addEventListener("DOMContentLoaded", verificarAutenticacao);

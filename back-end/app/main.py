@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.routes.colab import router as colab_router
 from app.routes.animais import router as animais_router
+from app.routes.auth import router as auth_router
 
 from app.database.connection import engine, SessionLocal
 from app.database.models import Base, AnimaisModel
@@ -78,9 +79,18 @@ def popular_animais_iniciais():
     finally:
         db.close()
 
-popular_animais_iniciais()
-
 app = FastAPI()
+
+@app.on_event("startup")
+def _startup_seed():
+    # Evita seed rodando via import e reduz chance de concorrência em múltiplos processos
+    try:
+        popular_animais_iniciais()
+    except Exception as e:
+        # Não derruba a API por falha no seed
+        print(f"Seed falhou: {e}")
+
+
 
 allowed = os.environ.get("ALLOWED_ORIGINS", "*")
 if allowed == "*" or allowed.strip() == "":
@@ -88,16 +98,23 @@ if allowed == "*" or allowed.strip() == "":
 else:
     origins = [o.strip() for o in allowed.split(",") if o.strip()]
 
+# CORS: não é permitido combinar allow_credentials=True com allow_origins=['*']
+cors_allow_credentials = True
+if origins == ["*"]:
+    cors_allow_credentials = False
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=True,
+    allow_credentials=cors_allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+
 app.include_router(colab_router, prefix="/api")
 app.include_router(animais_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
 
 static_dir = Path(__file__).resolve().parents[2] / "front-end" / "public"
 app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")

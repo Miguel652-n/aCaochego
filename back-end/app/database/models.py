@@ -24,6 +24,7 @@ class ColabModel(Base):
     __tablename__ = "colabs"
 
     id = Column(Integer, primary_key=True, index=True)
+
     nome = Column(String)
     email = Column(String)
     number = Column(String)
@@ -32,7 +33,14 @@ class ColabModel(Base):
     cep = Column(String)
     estado = Column(String)
     descricao = Column(String)
-    animal = Column(String)
-    # aprovado | reprovado | pendente
+
+    # animal_id refere-se a AnimaisModel.id
+    animal_id = Column(Integer, nullable=True, index=True)
+
+    # compatibilidade (legado): guarda também o nome do animal quando fornecido
+    animal = Column(String, nullable=True)
+
+    # aprovado | reprovado | pendente | adotado
     aprovado = Column(String, default="pendente")
     analise_ia = Column(String)
+

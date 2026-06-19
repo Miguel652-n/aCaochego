@@ -99,11 +99,12 @@ function renderPets() {
                 ${badgeStatus(status)}
                 <p>${pet.nome}</p>
                 <button ${desabilitado ? 'disabled style="opacity:0.4;cursor:not-allowed;"' : ''}>
-                    <a href="${desabilitado ? '#' : `formulario.html?animal=${encodeURIComponent(pet.nome)}`}"
+                    <a href="${desabilitado ? '#' : `formulario.html?animal=${encodeURIComponent(pet.nome)}&animalId=${encodeURIComponent(pet.id)}`}"
                        style="${desabilitado ? 'pointer-events:none;' : ''}">
                         ${desabilitado ? 'Adotado' : 'Adotar'}
                     </a>
                 </button>
+
             </article>
         `;
     });
@@ -133,10 +134,14 @@ function aplicarFiltro() {
 async function carregarAnimais() {
     try {
         const res = await fetch(`${API_URL}/api/animais`);
-        if (!res.ok) throw new Error("API indisponível");
+        if (!res.ok) {
+            throw new Error(`Erro HTTP ${res.status}: Falha ao carregar animais da API`);
+        }
         petsData = await res.json();
+        console.log(`✓ Carregados ${petsData.length} animais da API`);
     } catch (e) {
-        console.warn("API indisponível, usando dados locais:", e);
+        console.error("Erro ao carregar animais da API:", e.message);
+        console.warn("Usando dados locais como fallback");
         petsData = petsDataLocal.map(p => ({ ...p, status: "disponivel" }));
     }
     listaFiltrada = [...petsData];

@@ -1,13 +1,17 @@
 import os
 import json
 import httpx
+import re
 
-from fastapi import APIRouter
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, Field, EmailStr, field_validator
+
 from typing import Optional
+from sqlalchemy.orm import Session
 
 from app.database.connection import SessionLocal
 from app.database.models import ColabModel, AnimaisModel
+from app.dependencies import get_db
 
 router = APIRouter()
 
@@ -19,28 +23,51 @@ ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 # =========================
 
 class Colab(BaseModel):
-    nome: str
-    email: str
-    number: str
-    endereco: str
-    cidade: str
-    cep: str
-    estado: str
-    descricao: str
-    animal: Optional[str] = None
+    nome: str = Field(..., min_length=1, max_length=100)
+    email: EmailStr
+    number: str = Field(..., min_length=8, max_length=20)
+    endereco: str = Field(..., min_length=1, max_length=255)
+    cidade: str = Field(..., min_length=1, max_length=100)
+    cep: str = Field(..., min_length=8, max_length=10)
+    estado: str = Field(..., min_length=2, max_length=2)
+    descricao: str = Field(..., min_length=10, max_length=2000)
+
+    # novo contrato
+    animal_id: Optional[int] = Field(None)
+
+    # compatibilidade (legado)
+    animal: Optional[str] = Field(None, max_length=100)
+
+    
+    @field_validator('estado')
+    def validate_estado(cls, v):
+
+        valid_states = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 
+                       'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 
+                       'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO']
+        if v.upper() not in valid_states:
+            raise ValueError('Estado inválido')
+        return v.upper()
+    
+    @field_validator('cep')
+    def validate_cep(cls, v):
+
+        if not re.match(r'^\d{5}-?\d{3}$', v):
+            raise ValueError('CEP deve estar no formato XXXXX-XXX ou XXXXXXXX')
+        return v
 
 
 class ColabUpdate(BaseModel):
-    nome: Optional[str] = None
-    email: Optional[str] = None
-    number: Optional[str] = None
-    endereco: Optional[str] = None
-    cidade: Optional[str] = None
-    cep: Optional[str] = None
-    estado: Optional[str] = None
-    descricao: Optional[str] = None
-    animal: Optional[str] = None
-    aprovado: Optional[str] = None
+    nome: Optional[str] = Field(None, min_length=1, max_length=100)
+    email: Optional[EmailStr] = None
+    number: Optional[str] = Field(None, min_length=8, max_length=20)
+    endereco: Optional[str] = Field(None, min_length=1, max_length=255)
+    cidade: Optional[str] = Field(None, min_length=1, max_length=100)
+    cep: Optional[str] = Field(None, min_length=8, max_length=10)
+    estado: Optional[str] = Field(None, min_length=2, max_length=2)
+    descricao: Optional[str] = Field(None, min_length=10, max_length=2000)
+    animal: Optional[str] = Field(None, max_length=100)
+    aprovado: Optional[str] = Field(None, max_length=50)
 
 
 # =========================
@@ -103,8 +130,7 @@ Não escreva mais nada além do JSON."""
 # =========================
 
 @router.get("/colabs")
-def listar_colabs():
-    db = SessionLocal()
+def listar_colabs(db: Session = Depends(get_db)):
     try:
         colabs = db.query(ColabModel).all()
         return [
@@ -118,14 +144,15 @@ def listar_colabs():
                 "cep": c.cep,
                 "estado": c.estado,
                 "descricao": c.descricao,
+                "animal_id": c.animal_id,
                 "animal": c.animal,
                 "aprovado": c.aprovado or "pendente",
                 "analise_ia": c.analise_ia or ""
             }
             for c in colabs
         ]
-    finally:
-        db.close()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao listar colaboradores: {str(e)}")
 
 
 # =========================
@@ -133,8 +160,7 @@ def listar_colabs():
 # =========================
 
 @router.post("/colabs")
-def criar_colab(colab: Colab):
-    db = SessionLocal()
+def criar_colab(colab: Colab, db: Session = Depends(get_db)):
     try:
         # Análise de aptidão pela IA
         resultado = analisar_aptidao(colab.descricao, colab.animal)
@@ -148,20 +174,27 @@ def criar_colab(colab: Colab):
             cep=colab.cep,
             estado=colab.estado,
             descricao=colab.descricao,
+            animal_id=colab.animal_id,
             animal=colab.animal,
             aprovado=resultado["aprovado"],
             analise_ia=resultado["analise"]
         )
 
+
         db.add(novo_colab)
 
         # Se aprovado e tem animal, muda status do animal para "em_adocao"
-        if resultado["aprovado"] == "aprovado" and colab.animal:
-            animal = db.query(AnimaisModel).filter(
-                AnimaisModel.nome == colab.animal
-            ).first()
+        if resultado["aprovado"] == "aprovado":
+            # Preferir animal_id (novo contrato)
+            if colab.animal_id:
+                animal = db.query(AnimaisModel).filter(AnimaisModel.id == colab.animal_id).first()
+            else:
+                # legado
+                animal = db.query(AnimaisModel).filter(AnimaisModel.nome == colab.animal).first() if colab.animal else None
+
             if animal:
                 animal.status = "em_adocao"
+
 
         db.commit()
 
@@ -170,9 +203,9 @@ def criar_colab(colab: Colab):
             "aprovado": resultado["aprovado"],
             "analise_ia": resultado["analise"]
         }
-
-    finally:
-        db.close()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao criar colaborador: {str(e)}")
 
 
 # =========================
@@ -180,12 +213,11 @@ def criar_colab(colab: Colab):
 # =========================
 
 @router.patch("/colabs/{id}")
-def atualizar_colab(id: int, colab: ColabUpdate):
-    db = SessionLocal()
+def atualizar_colab(id: int, colab: ColabUpdate, db: Session = Depends(get_db)):
     try:
         colab_db = db.query(ColabModel).filter(ColabModel.id == id).first()
         if not colab_db:
-            return {"erro": "colab não encontrado"}
+            raise HTTPException(status_code=404, detail="Colaborador não encontrado")
 
         animal_anterior = colab_db.animal
         aprovado_anterior = colab_db.aprovado
@@ -197,27 +229,47 @@ def atualizar_colab(id: int, colab: ColabUpdate):
 
         # Se o admin mudou o status de aprovação, atualiza status do animal
         if colab.aprovado is not None and colab.aprovado != aprovado_anterior:
-            nome_animal = colab.animal or animal_anterior
-            if nome_animal:
-                animal = db.query(AnimaisModel).filter(AnimaisModel.nome == nome_animal).first()
+            # Preferir animal_id (novo contrato)
+            animal_id = colab.animal_id if colab.animal_id is not None else colab_db.animal_id
+
+            if animal_id is not None:
+                animal = db.query(AnimaisModel).filter(AnimaisModel.id == animal_id).first()
                 if animal:
                     if colab.aprovado == "aprovado":
                         animal.status = "em_adocao"
                     elif colab.aprovado == "reprovado":
-                        # Verifica se ainda tem outro colab aprovado para esse animal
                         outros = db.query(ColabModel).filter(
-                            ColabModel.animal == nome_animal,
+                            ColabModel.animal_id == animal_id,
                             ColabModel.aprovado == "aprovado",
                             ColabModel.id != id
                         ).count()
                         if outros == 0:
                             animal.status = "disponivel"
+            else:
+                # legado: por nome
+                nome_animal = colab.animal or animal_anterior
+                if nome_animal:
+                    animal = db.query(AnimaisModel).filter(AnimaisModel.nome == nome_animal).first()
+                    if animal:
+                        if colab.aprovado == "aprovado":
+                            animal.status = "em_adocao"
+                        elif colab.aprovado == "reprovado":
+                            outros = db.query(ColabModel).filter(
+                                ColabModel.animal == nome_animal,
+                                ColabModel.aprovado == "aprovado",
+                                ColabModel.id != id
+                            ).count()
+                            if outros == 0:
+                                animal.status = "disponivel"
+
 
         db.commit()
-        return {"mensagem": "colab atualizado"}
-
-    finally:
-        db.close()
+        return {"mensagem": "colab atualizado com sucesso"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao atualizar colab: {str(e)}")
 
 
 # =========================
@@ -225,25 +277,32 @@ def atualizar_colab(id: int, colab: ColabUpdate):
 # =========================
 
 @router.patch("/colabs/{id}/adotado")
-def marcar_adotado(id: int):
-    db = SessionLocal()
+def marcar_adotado(id: int, db: Session = Depends(get_db)):
     try:
         colab_db = db.query(ColabModel).filter(ColabModel.id == id).first()
         if not colab_db:
-            return {"erro": "colab não encontrado"}
+            raise HTTPException(status_code=404, detail="Colaborador não encontrado")
 
         colab_db.aprovado = "adotado"
 
-        if colab_db.animal:
+        # Atualiza status do animal usando animal_id (novo) ou nome (legado)
+        animal = None
+        if colab_db.animal_id:
+            animal = db.query(AnimaisModel).filter(AnimaisModel.id == colab_db.animal_id).first()
+        elif colab_db.animal:
             animal = db.query(AnimaisModel).filter(AnimaisModel.nome == colab_db.animal).first()
-            if animal:
-                animal.status = "adotado"
+
+        if animal:
+            animal.status = "adotado"
+
 
         db.commit()
-        return {"mensagem": "adoção confirmada"}
-
-    finally:
-        db.close()
+        return {"mensagem": "adoção confirmada com sucesso"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao confirmar adoção: {str(e)}")
 
 
 # =========================
@@ -251,14 +310,16 @@ def marcar_adotado(id: int):
 # =========================
 
 @router.delete("/colabs/{id}")
-def deletar_colab(id: int):
-    db = SessionLocal()
+def deletar_colab(id: int, db: Session = Depends(get_db)):
     try:
         colab_db = db.query(ColabModel).filter(ColabModel.id == id).first()
         if not colab_db:
-            return {"erro": "colab não encontrado"}
+            raise HTTPException(status_code=404, detail="Colaborador não encontrado")
         db.delete(colab_db)
         db.commit()
         return {"mensagem": "colab deletado com sucesso"}
-    finally:
-        db.close()
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao deletar colab: {str(e)}")
