@@ -126,7 +126,7 @@ function aplicarFiltro() {
 
 async function carregarAnimais() {
     try {
-        const res = await fetch(`${API_URL}/animais`);
+        const res = await fetch(`${API_URL}/api/animais`);
         if (!res.ok) throw new Error("API indisponível");
         petsData = await res.json();
     } catch (e) {

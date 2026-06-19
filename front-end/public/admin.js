@@ -38,7 +38,7 @@ const API_URL = window.location.origin && window.location.origin !== "null"
     tbody.innerHTML = `<tr><td colspan="7"><div class="estado"><i class="bi bi-hourglass-split"></i>Carregando...</div></td></tr>`;
 
     try {
-      const res = await fetch(`${API_URL}/colabs`);
+      const res = await fetch(`${API_URL}/api/colabs`);
       todosColabs = await res.json();
 
       atualizarResumo();
@@ -156,7 +156,7 @@ const API_URL = window.location.origin && window.location.origin !== "null"
     if (!confirm("Remover este cadastro?")) return;
 
     try {
-      await fetch(`${API_URL}/colabs/${id}`, { method: "DELETE" });
+      await fetch(`${API_URL}/api/colabs/${id}`, { method: "DELETE" });
       todosColabs = todosColabs.filter(c => c.id !== id);
       atualizarResumo();
       atualizarFiltroAnimal();

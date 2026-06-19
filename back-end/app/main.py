@@ -6,11 +6,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from routes.colab import router as colab_router
-from routes.animais import router as animais_router
+from app.routes.colab import router as colab_router
+from app.routes.animais import router as animais_router
 
-from database.connection import engine, SessionLocal
-from database.models import Base, AnimaisModel
+from app.database.connection import engine, SessionLocal
+from app.database.models import Base, AnimaisModel
 
 Base.metadata.create_all(bind=engine)
 
@@ -89,8 +89,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(colab_router)
-app.include_router(animais_router)
+app.include_router(colab_router, prefix="/api")
+app.include_router(animais_router, prefix="/api")
 
 static_dir = Path(__file__).resolve().parents[2] / "front-end" / "public"
 app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")

@@ -25,7 +25,7 @@ form.addEventListener("submit", async (e) => {
 
     try {
 
-        const resposta = await fetch(`${API_URL}/colabs`, {
+        const resposta = await fetch(`${API_URL}/api/colabs`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
