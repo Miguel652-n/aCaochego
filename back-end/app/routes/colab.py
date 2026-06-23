@@ -77,7 +77,7 @@ Não escreva mais nada além do JSON."""
 
     try:
         response = httpx.post(
-            "https://api.anthropic.com/v1/messages",
+            # "https://api.anthropic.com/v1/messages",
             headers={
                 "x-api-key": DATABASE_URL,
                 "anthropic-version": "2023-06-01",
@@ -143,7 +143,7 @@ def criar_colab(colab: Colab):
     db = SessionLocal()
     try:
         # Análise de aptidão pela IA
-        resultado = analisar_aptidao(colab.descricao, colab.animal)
+        resultado = {"aprovado": "pendente", "analise": ""}
 
         novo_colab = ColabModel(
             nome=colab.nome,
