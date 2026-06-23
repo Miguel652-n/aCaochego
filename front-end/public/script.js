@@ -1,4 +1,4 @@
-const API_URL = "back-end-production-f743.up.railway.app";
+const API_URL = "https://back-end-production-f743.up.railway.app";
 
 // Lista local como fallback caso a API falhe
 const petsDataLocal = [
