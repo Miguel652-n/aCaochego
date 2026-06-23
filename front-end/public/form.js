@@ -1,4 +1,4 @@
-const API_URL = "https://acaochego-production.up.railway.app";
+const API_URL = "https://back-end-production-f743.up.railway.app"; // URL da API
 
 const params = new URLSearchParams(window.location.search);
 const animalNome = params.get("animal") || "";
