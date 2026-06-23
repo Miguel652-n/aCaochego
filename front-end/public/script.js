@@ -1,4 +1,4 @@
-const API_URL = "https://acaochego-production.up.railway.app/animais";
+const API_URL = "https://acaochego-production.up.railway.app";
 
 // Lista local como fallback caso a API falhe
 const petsDataLocal = [
