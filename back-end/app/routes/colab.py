@@ -6,12 +6,18 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import Optional
 
-from database.connection import SessionLocal
-from database.models import ColabModel, AnimaisModel
+from app.database.connection import SessionLocal
+from app.database.models import ColabModel, AnimaisModel
 
 router = APIRouter()
 
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+DATABASE_URL = os.getenv("DATABASE_URL")
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace(
+        "postgres://",
+        "postgresql://",
+        1
+    )
 
 
 # =========================
@@ -50,7 +56,7 @@ class ColabUpdate(BaseModel):
 def analisar_aptidao(descricao: str, nome_animal: Optional[str]) -> dict:
     """Chama a API da Anthropic para analisar se o colaborador é apto a adotar."""
 
-    if not ANTHROPIC_API_KEY:
+    if not DATABASE_URL:
         return {"aprovado": "pendente", "analise": "Chave da API não configurada."}
 
     prompt = f"""Você é um especialista em bem-estar animal que avalia candidatos à adoção de pets.
@@ -73,7 +79,7 @@ Não escreva mais nada além do JSON."""
         response = httpx.post(
             "https://api.anthropic.com/v1/messages",
             headers={
-                "x-api-key": ANTHROPIC_API_KEY,
+                "x-api-key": DATABASE_URL,
                 "anthropic-version": "2023-06-01",
                 "content-type": "application/json"
             },

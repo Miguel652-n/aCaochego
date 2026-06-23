@@ -2,8 +2,8 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import Optional
 
-from database.connection import SessionLocal
-from database.models import AnimaisModel
+from app.database.connection import SessionLocal
+from app.database.models import AnimaisModel
 
 router = APIRouter()
 

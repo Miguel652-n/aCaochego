@@ -3,11 +3,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routes.colab import router as colab_router
-from routes.animais import router as animais_router
+from app.routes.colab import router as colab_router
+from app.routes.animais import router as animais_router
 
-from database.connection import engine
-from database.models import Base
+from app.database.connection import engine
+from app.database.models import Base
 
 Base.metadata.create_all(bind=engine)
 
