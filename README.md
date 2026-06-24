@@ -1,4 +1,4 @@
-# 🐾 AçãoChego
+# 🐾 aCãochego
 
 Sistema web para adoção responsável de animais desenvolvido com FastAPI, PostgreSQL e JavaScript.
 
