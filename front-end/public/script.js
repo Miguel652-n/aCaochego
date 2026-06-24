@@ -79,7 +79,9 @@ function renderPets() {
 
     visiveis.forEach(pet => {
         const status = pet.status || "disponivel";
-        const desabilitado = status === "adotado";
+        const desabilitado =
+            status === "adotado" ||
+            status === "em_adocao";
 
         container.innerHTML += `
             <article class="adotar-card">
@@ -93,7 +95,13 @@ function renderPets() {
                 <button ${desabilitado ? 'disabled style="opacity:0.4;cursor:not-allowed;"' : ''}>
                     <a href="${desabilitado ? '#' : `formulario.html?animal=${encodeURIComponent(pet.nome)}`}"
                        style="${desabilitado ? 'pointer-events:none;' : ''}">
-                        ${desabilitado ? 'Adotado' : 'Adotar'}
+                        ${
+                            status === "adotado"
+                                ? "Adotado"
+                                : status === "em_adocao"
+                                    ? "Em análise"
+                                    : "Adotar"
+                        }
                     </a>
                 </button>
             </article>
