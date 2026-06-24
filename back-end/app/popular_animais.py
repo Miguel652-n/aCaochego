@@ -1,6 +1,6 @@
 import requests
 
-API_URL = "https://acaochego-production.up.railway.app"
+API_URL = "https://back-end-production-f743.up.railway.app"
 
 animais = [
     {"nome":"Ben","especie":"cachorro","genero":"macho","idade":"Idoso","regiao":"MG","ong":"Amparo pet","cidade":"Uberlândia","imagem":"Assets/Doguinhos/Machos/Ben_I.png"},

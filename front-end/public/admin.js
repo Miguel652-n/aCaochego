@@ -112,23 +112,79 @@ const API_URL = "https://back-end-production-f743.up.railway.app"; // URL da API
     `).join("");
   }
 
-  function abrirModal(id) {
-    const c = todosColabs.find(x => x.id === id);
-    if (!c) return;
+function abrirModal(id) {
+  const c = todosColabs.find(x => x.id === id);
+  if (!c) return;
 
-    document.getElementById("modal-nome").textContent = c.nome;
-    document.getElementById("modal-conteudo").innerHTML = `
-      <div class="modal-linha"><span class="modal-label">Email</span><span class="modal-valor">${c.email}</span></div>
-      <div class="modal-linha"><span class="modal-label">Contato</span><span class="modal-valor">${c.number || "—"}</span></div>
-      <div class="modal-linha"><span class="modal-label">Endereço</span><span class="modal-valor">${c.endereco || "—"}</span></div>
-      <div class="modal-linha"><span class="modal-label">Cidade / Estado</span><span class="modal-valor">${c.cidade || "—"} / ${c.estado || "—"}</span></div>
-      <div class="modal-linha"><span class="modal-label">CEP</span><span class="modal-valor">${c.cep || "—"}</span></div>
-      <div class="modal-linha"><span class="modal-label">Animal desejado</span><span class="modal-valor">${c.animal || "Não informado"}</span></div>
-      <div class="modal-linha"><span class="modal-label">Descrição</span><span class="modal-valor">${c.descricao || "—"}</span></div>
-    `;
+  document.getElementById("modal-nome").textContent = c.nome;
 
-    document.getElementById("overlay").classList.add("ativo");
-  }
+  document.getElementById("modal-conteudo").innerHTML = `
+      <div class="modal-linha">
+        <span class="modal-label">Email</span>
+        <span class="modal-valor">${c.email}</span>
+      </div>
+
+      <div class="modal-linha">
+        <span class="modal-label">Contato</span>
+        <span class="modal-valor">${c.number || "—"}</span>
+      </div>
+
+      <div class="modal-linha">
+        <span class="modal-label">Endereço</span>
+        <span class="modal-valor">${c.endereco || "—"}</span>
+      </div>
+
+      <div class="modal-linha">
+        <span class="modal-label">Cidade / Estado</span>
+        <span class="modal-valor">${c.cidade || "—"} / ${c.estado || "—"}</span>
+      </div>
+
+      <div class="modal-linha">
+        <span class="modal-label">CEP</span>
+        <span class="modal-valor">${c.cep || "—"}</span>
+      </div>
+
+      <div class="modal-linha">
+        <span class="modal-label">Animal desejado</span>
+        <span class="modal-valor">${c.animal || "Não informado"}</span>
+      </div>
+
+      <div class="modal-linha">
+        <span class="modal-label">Descrição</span>
+        <span class="modal-valor">${c.descricao || "—"}</span>
+      </div>
+
+      <div class="modal-linha">
+        <span class="modal-label">Status</span>
+        <span class="modal-valor">${c.aprovado || "pendente"}</span>
+      </div>
+
+      <div class="modal-linha">
+        <span class="modal-label">Análise IA</span>
+        <span class="modal-valor">${c.analise_ia || "Sem análise"}</span>
+      </div>
+
+      <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button onclick="alterarStatus(${c.id}, 'aprovado')">
+          Aprovar
+        </button>
+
+        <button onclick="alterarStatus(${c.id}, 'reprovado')">
+          Reprovar
+        </button>
+
+        <button onclick="alterarStatus(${c.id}, 'pendente')">
+          Pendente
+        </button>
+
+        <button onclick="marcarAdotado(${c.id})">
+          Adotado
+        </button>
+      </div>
+  `;
+
+  document.getElementById("overlay").classList.add("ativo");
+}
 
   function fecharModal(e) {
     if (e.target === document.getElementById("overlay")) {
@@ -150,3 +206,62 @@ const API_URL = "https://back-end-production-f743.up.railway.app"; // URL da API
       alert("Erro ao deletar.");
     }
   }
+
+  async function alterarStatus(id, status) {
+  try {
+
+    const resposta = await fetch(
+      `${API_URL}/colabs/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          aprovado: status
+        })
+      }
+    );
+
+    if (!resposta.ok) {
+      throw new Error("Erro ao atualizar");
+    }
+
+    await carregarColabs();
+
+    alert(`Status alterado para ${status}`);
+
+    document.getElementById("overlay").classList.remove("ativo");
+
+  } catch (err) {
+    alert("Erro ao atualizar status");
+    console.error(err);
+  }
+}
+
+async function marcarAdotado(id) {
+
+  try {
+
+    const resposta = await fetch(
+      `${API_URL}/colabs/${id}/adotado`,
+      {
+        method: "PATCH"
+      }
+    );
+
+    if (!resposta.ok) {
+      throw new Error("Erro");
+    }
+
+    await carregarColabs();
+
+    alert("Animal marcado como adotado");
+
+    document.getElementById("overlay").classList.remove("ativo");
+
+  } catch (err) {
+    alert("Erro ao marcar adoção");
+    console.error(err);
+  }
+}
