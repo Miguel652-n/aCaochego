@@ -77,6 +77,15 @@ A decisão final continua sendo realizada pelo administrador.
 
 * Railway
 
+### Inteligência Artificial
+
+* Sistema de análise automática de candidatos
+* Classificação baseada em pontuação
+* Processamento de texto em linguagem natural
+* Recomendação automática para aprovação, reprovação ou pendência
+* Estrutura preparada para futura integração com modelos de Machine Learning
+
+
 ---
 
 ## 📂 Estrutura do Projeto
@@ -195,6 +204,65 @@ Remove uma solicitação.
 
 ---
 
+## ☁️ Deploy no Railway
+
+### 1. Backend
+
+1. Criar um novo projeto no Railway.
+2. Conectar o repositório GitHub.
+3. Selecionar a pasta do backend.
+4. Configurar as variáveis de ambiente.
+5. O Railway detectará automaticamente o projeto Python.
+
+Variáveis recomendadas:
+
+```env
+DATABASE_URL=postgresql://...
+PORT=8080
+```
+
+### 2. Banco de Dados
+
+1. Adicionar um serviço PostgreSQL no Railway.
+2. Copiar a variável DATABASE_URL gerada.
+3. Inserir essa variável no serviço do backend.
+
+### 3. Frontend
+
+1. Criar um novo serviço no Railway.
+2. Conectar a pasta do frontend.
+3. Configurar a URL da API:
+
+```javascript
+const API_URL = "https://seu-backend.up.railway.app";
+```
+
+4. Realizar o deploy.
+
+### 4. Popular o Banco
+
+Após o deploy do backend:
+
+```bash
+python popular_animais.py
+```
+
+O script enviará os animais para o banco PostgreSQL hospedado no Railway.
+
+### 5. Atualizações
+
+Após qualquer alteração:
+
+```bash
+git add .
+git commit -m "descrição da alteração"
+git push
+```
+
+O Railway realizará o redeploy automaticamente.
+
+---
+
 ## 🎯 Objetivos do Projeto
 
 * Incentivar a adoção responsável
@@ -202,18 +270,6 @@ Remove uma solicitação.
 * Organizar o processo de adoção
 * Reduzir o trabalho manual de análise
 * Promover o bem-estar animal
-
----
-
-## 🔮 Melhorias Futuras
-
-* Sistema de autenticação com JWT
-* Upload de imagens pelo painel administrativo
-* Histórico completo de adoções
-* Dashboard com métricas
-* Integração com IA generativa
-* Notificações por e-mail
-* Área exclusiva para ONGs
 
 ---
 
