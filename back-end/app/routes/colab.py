@@ -142,8 +142,63 @@ def listar_colabs():
 def criar_colab(colab: Colab):
     db = SessionLocal()
     try:
-        # Análise de aptidão pela IA
-        resultado = {"aprovado": "pendente", "analise": ""}
+        # =========================
+        # ANÁLISE AUTOMÁTICA
+        # =========================
+
+        texto = colab.descricao.lower()
+
+        score = 0
+        motivos = []
+
+        if "casa" in texto:
+            score += 20
+            motivos.append("Mora em casa")
+
+        if "quintal" in texto:
+            score += 20
+            motivos.append("Possui quintal")
+
+        if "cachorro" in texto or "gato" in texto:
+            score += 15
+            motivos.append("Possui experiência com animais")
+
+        if "familia" in texto or "família" in texto:
+            score += 15
+            motivos.append("Possui apoio familiar")
+
+        if "trabalho" in texto or "home office" in texto:
+            score += 15
+            motivos.append("Possui rotina informada")
+
+        if "renda" in texto:
+            score += 15
+            motivos.append("Mencionou estabilidade financeira")
+
+        # A IA apenas recomenda.
+        # O status continua pendente para o administrador decidir.
+
+        if score >= 60:
+            recomendacao = "aprovado"
+        elif score >= 30:
+            recomendacao = "pendente"
+        else:
+            recomendacao = "reprovado"
+
+        analise = (
+            f"Recomendação IA: {recomendacao.upper()}. "
+            f"Pontuação: {score}/100. "
+            + (
+                "Motivos encontrados: " + ", ".join(motivos)
+                if motivos
+                else "Poucas informações fornecidas."
+            )
+        )
+
+        resultado = {
+            "aprovado": "pendente",
+            "analise": analise
+        }
 
         novo_colab = ColabModel(
             nome=colab.nome,
